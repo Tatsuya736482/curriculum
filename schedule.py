@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 
 ##シラバスのURL
-url = "https://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC=202402445&lang=JA&vid=03"
+url = "https://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&KougiCD=202400054"
 
 startHour = {
 '1': "8",
@@ -44,19 +44,23 @@ endMinute = {
 
 startMonth = {
 '3Q': '10',
+'3-4Q': '10',
 '4Q': '12'
 }
 
 startDay = {
 '3Q': '3',
+'3-4Q': '3',
 '4Q': '6'
 }
 endMonth = {
 '3Q': '11',
+'3-4Q': '2',
 '4Q': '2'    
 }
 endDay = {
 '3Q': '21',
+'3-4Q': '3',
 '4Q': '3'
 }
 
