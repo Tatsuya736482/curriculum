@@ -8,6 +8,7 @@ from dateutil.rrule import WEEKLY
 import requests
 from bs4 import BeautifulSoup
 
+
 ##シラバスのURL
 url = "https://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC=202402445&lang=JA&vid=03"
 
