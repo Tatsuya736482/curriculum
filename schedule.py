@@ -1,16 +1,15 @@
 
-import requests
-from bs4 import BeautifulSoup
+import os
 import re
 from datetime import datetime, timedelta
-from icalendar import Calendar, Event
-from dateutil.rrule import WEEKLY
+
 import requests
 from bs4 import BeautifulSoup
-
+from dateutil.rrule import WEEKLY
+from icalendar import Calendar, Event
 
 ##シラバスのURL
-url = "https://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&KougiCD=202400054"
+url = input("urlを入力してください:")
 
 startHour = {
 '1': "8",
@@ -62,6 +61,12 @@ endDay = {
 '3Q': '21',
 '3-4Q': '3',
 '4Q': '3'
+}
+
+endYearGap = {
+'3Q': '0',
+'3-4Q': '1',
+'4Q': '1'
 }
 
 day_abbreviations = {
@@ -186,7 +191,7 @@ for i in range(len(timeWeekly)):
     # 毎週の繰り返し設定（2024年12月10日まで毎週木曜日）
     event.add('rrule', {
         'freq': 'weekly',  # 毎週
-        'until': datetime(year,  int(endMonth[quarter]), int(endDay[quarter]), 23, 59, 0),  # 終了日
+        'until': datetime(year+int(endYearGap[quarter]),  int(endMonth[quarter]), int(endDay[quarter]), 23, 59, 0),  # 終了日
         'byday': timeWeekly[i],  # 木曜日に繰り返し
     })
 
@@ -195,5 +200,7 @@ for i in range(len(timeWeekly)):
 
 # カレンダーをファイルに保存
 filename = h3_text_splitted[2].replace(" ", "")+".ics"
-with open(filename, 'wb') as f:
+directory = "schedules"
+file_path = os.path.join(directory, filename)
+with open(file_path, 'wb') as f:
     f.write(cal.to_ical())
