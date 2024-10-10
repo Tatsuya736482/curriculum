@@ -1,6 +1,4 @@
 
-<<<<<<< HEAD
-import os
 import re
 from datetime import datetime, timedelta
 
@@ -11,20 +9,6 @@ from icalendar import Calendar, Event
 
 ##シラバスのURL
 url = input("urlを入力してください:")
-=======
-import requests
-from bs4 import BeautifulSoup
-import re
-from datetime import datetime, timedelta
-from icalendar import Calendar, Event
-from dateutil.rrule import WEEKLY
-import requests
-from bs4 import BeautifulSoup
-
-
-##シラバスのURL
-url = "https://www.ocw.titech.ac.jp/index.php?module=General&action=T0300&JWC=202402445&lang=JA&vid=03"
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
 
 startHour = {
 '1': "8",
@@ -58,32 +42,22 @@ endMinute = {
 
 startMonth = {
 '3Q': '10',
-<<<<<<< HEAD
 '3-4Q': '10',
-=======
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
 '4Q': '12'
 }
 
 startDay = {
 '3Q': '3',
-<<<<<<< HEAD
 '3-4Q': '3',
-=======
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
 '4Q': '6'
 }
 endMonth = {
 '3Q': '11',
-<<<<<<< HEAD
 '3-4Q': '2',
-=======
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
 '4Q': '2'    
 }
 endDay = {
 '3Q': '21',
-<<<<<<< HEAD
 '3-4Q': '3',
 '4Q': '3'
 }
@@ -94,11 +68,6 @@ endYearGap = {
 '4Q': '1'
 }
 
-=======
-'4Q': '3'
-}
-
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
 day_abbreviations = {
     '月': 'Mo',  # Monday
     '火': 'Tu',  # Tuesday
@@ -221,11 +190,7 @@ for i in range(len(timeWeekly)):
     # 毎週の繰り返し設定（2024年12月10日まで毎週木曜日）
     event.add('rrule', {
         'freq': 'weekly',  # 毎週
-<<<<<<< HEAD
         'until': datetime(year+int(endYearGap[quarter]),  int(endMonth[quarter]), int(endDay[quarter]), 23, 59, 0),  # 終了日
-=======
-        'until': datetime(year,  int(endMonth[quarter]), int(endDay[quarter]), 23, 59, 0),  # 終了日
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
         'byday': timeWeekly[i],  # 木曜日に繰り返し
     })
 
@@ -234,11 +199,9 @@ for i in range(len(timeWeekly)):
 
 # カレンダーをファイルに保存
 filename = h3_text_splitted[2].replace(" ", "")+".ics"
-<<<<<<< HEAD
-directory = "schedules"
-file_path = os.path.join(directory, filename)
+directory = "schedules/"
+file_path = directory + filename
+
+# ファイルを書き込みモードで保存
 with open(file_path, 'wb') as f:
-=======
-with open(filename, 'wb') as f:
->>>>>>> 863d1d1cdf213f4c6936e9220675fbabadfd1b76
     f.write(cal.to_ical())
