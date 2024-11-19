@@ -89,6 +89,8 @@ day_to_number = {
     'Su': 6   # Sunday
 }
 
+
+
 res = requests.get(url)
 res.encoding = res.apparent_encoding
 soup = BeautifulSoup(res.text, 'html.parser')
@@ -125,7 +127,19 @@ quarter_dd = soup.find('dt', string='開講クォーター').find_next_sibling('
 quarter = quarter_dd.text.strip()
 
 
-
+excluded_dates = []
+if quarter == '4Q':
+    excluded_dates = [
+        datetime(2024, 12, 28, 0, 0),
+        datetime(2024, 12, 29, 0, 0),
+        datetime(2024, 12, 30, 0, 0),
+        datetime(2024, 12, 31, 0, 0),
+        datetime(2025, 1, 1, 0, 0),
+        datetime(2025, 1, 2, 0, 0),
+        datetime(2025, 1, 3, 0, 0),
+        datetime(2025, 1, 17, 0, 0),
+        datetime(2025, 1, 18, 0, 0)
+    ]
 
 
 weekdays = ['月', '火', '水', '木', '金', '土', '日']
@@ -153,6 +167,7 @@ print(timePeriodStart) #['1', '1']
 print(timePeriodEnd) #['2', '2']
 print(location) #['W2-402(W242)', 'W2-402(W242)']
 print(quarter) #3Q
+print(excluded_dates)
 
 # カレンダーの生成
 cal = Calendar()
@@ -160,45 +175,47 @@ cal.add('prodid', '-//Test//test-product//ja//')
 cal.add('version', '2.0')
 cal.add('calscale', 'GREGORIAN')
 
-for i in range(len(timeWeekly)):
 
+
+
+
+
+for i in range(len(timeWeekly)):
     # 開始日時の設定
     quarterStartDate = datetime(year, int(startMonth[quarter]), int(startDay[quarter]))
     weekdayNum = int(day_to_number[timeWeekly[i]])
 
-    if quarterStartDate.weekday() != weekdayNum:  
-        days_until_thursday = (weekdayNum - quarterStartDate.weekday()+7) % 7
-        
-        classStartDate=quarterStartDate + timedelta(days=days_until_thursday)
+    if quarterStartDate.weekday() != weekdayNum:
+        days_until_thursday = (weekdayNum - quarterStartDate.weekday() + 7) % 7
+        classStartDate = quarterStartDate + timedelta(days=days_until_thursday)
     else:
-        classStartDate= quarterStartDate
-
- 
-
-
-
+        classStartDate = quarterStartDate
 
     # イベントの作成
     event = Event()
     event.add('summary', className)  # イベントのタイトル
-    event.add('dtstart', classStartDate.replace(hour = int(startHour[timePeriodStart[i]]),minute = int(startMinute[timePeriodStart[i]])) )  # 開始日時
-    event.add('dtend', classStartDate.replace(hour = int(endHour[timePeriodEnd[i]]),minute = int(endMinute[timePeriodEnd[i]]))) # 終了日時
+    event.add('dtstart', classStartDate.replace(hour=int(startHour[timePeriodStart[i]]), minute=int(startMinute[timePeriodStart[i]])))  # 開始日時
+    event.add('dtend', classStartDate.replace(hour=int(endHour[timePeriodEnd[i]]), minute=int(endMinute[timePeriodEnd[i]])))  # 終了日時
     event.add('dtstamp', datetime.now())  # タイムスタンプ
     event.add('location', location[i])  # 場所
     event.add('description', url)
 
-    # 毎週の繰り返し設定（2024年12月10日まで毎週木曜日）
+    # 毎週の繰り返し設定
     event.add('rrule', {
-        'freq': 'weekly',  # 毎週
-        'until': datetime(year+int(endYearGap[quarter]),  int(endMonth[quarter]), int(endDay[quarter]), 23, 59, 0),  # 終了日
-        'byday': timeWeekly[i],  # 木曜日に繰り返し
+        'freq': 'weekly',
+        'until': datetime(year + int(endYearGap[quarter]), int(endMonth[quarter]), int(endDay[quarter]), 23, 59, 0),
+        'byday': timeWeekly[i],
     })
+
+    # 除外日付を追加
+    for excluded_date in excluded_dates:
+        event.add('exdate', excluded_date.replace(hour=int(startHour[timePeriodStart[i]]), minute=int(startMinute[timePeriodStart[i]])))
 
     # イベントをカレンダーに追加
     cal.add_component(event)
 
 # カレンダーをファイルに保存
-filename = h3_text_splitted[2].replace(" ", "")+".ics"
+filename = h3_text_splitted[2].replace(" ", "") + ".ics"
 directory = "schedules/"
 file_path = directory + filename
 
